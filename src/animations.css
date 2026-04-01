@@ -146,7 +146,7 @@
     var(--bg-grad-1)
   );
   background-size: 400% 400%;
-  animation: bg-shift var(--dbg-bg-speed, 45s) ease-in-out infinite;
+  animation: bg-shift var(--dbg-bg-speed, 49.5s) ease-in-out infinite;
 }
 
 @keyframes bg-shift {
@@ -175,31 +175,31 @@
   width: 40vmax;
   height: 40vmax;
   background: var(--bg-grad-1);
-  animation: blob-drift-1 25s ease-in-out infinite alternate;
+  animation: blob-drift-1 27.5s ease-in-out infinite alternate;
 }
 .bg-blob:nth-child(2) {
   width: 35vmax;
   height: 35vmax;
   background: var(--bg-grad-2);
-  animation: blob-drift-2 30s ease-in-out infinite alternate;
+  animation: blob-drift-2 33s ease-in-out infinite alternate;
 }
 .bg-blob:nth-child(3) {
   width: 30vmax;
   height: 30vmax;
   background: var(--bg-grad-3);
-  animation: blob-drift-3 20s ease-in-out infinite alternate;
+  animation: blob-drift-3 22s ease-in-out infinite alternate;
 }
 .bg-blob:nth-child(4) {
   width: 38vmax;
   height: 38vmax;
   background: var(--bg-grad-4);
-  animation: blob-drift-4 28s ease-in-out infinite alternate;
+  animation: blob-drift-4 30.8s ease-in-out infinite alternate;
 }
 .bg-blob:nth-child(5) {
   width: 32vmax;
   height: 32vmax;
   background: var(--bg-grad-5);
-  animation: blob-drift-5 22s ease-in-out infinite alternate;
+  animation: blob-drift-5 24.2s ease-in-out infinite alternate;
 }
 
 @keyframes blob-drift-1 {
@@ -237,7 +237,7 @@
     radial-gradient(ellipse at 90% 70%, var(--bg-grad-4), transparent 60%),
     radial-gradient(ellipse at 10% 10%, var(--bg-grad-5), transparent 60%);
   background-size: 200% 200%;
-  animation: pulse-bg var(--dbg-bg-speed, 35s) ease-in-out infinite;
+  animation: pulse-bg var(--dbg-bg-speed, 38.5s) ease-in-out infinite;
 }
 
 @keyframes pulse-bg {
@@ -260,7 +260,7 @@
     var(--bg-grad-1) 100%
   );
   background-size: 300% 300%;
-  animation: sweep-bg var(--dbg-bg-speed, 30s) linear infinite;
+  animation: sweep-bg var(--dbg-bg-speed, 33s) linear infinite;
 }
 
 @keyframes sweep-bg {
@@ -278,7 +278,7 @@
     linear-gradient(180deg, transparent, var(--bg-grad-5), transparent);
   background-size: 20% 200%, 25% 250%, 18% 180%, 22% 220%, 20% 200%;
   background-repeat: no-repeat;
-  animation: aurora-bg var(--dbg-bg-speed, 20s) ease-in-out infinite alternate;
+  animation: aurora-bg var(--dbg-bg-speed, 22s) ease-in-out infinite alternate;
 }
 
 @keyframes aurora-bg {

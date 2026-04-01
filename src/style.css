@@ -254,7 +254,11 @@ body {
   transition: opacity 0.4s ease;
 }
 
-html.ready .controls {
+html.ready .controls,
+html.ready .settings,
+html.ready .github-link,
+html.ready .countdown-panel,
+html.ready .footer {
   visibility: visible;
 }
 
@@ -674,6 +678,33 @@ html.ready .controls {
   z-index: 1;
   white-space: nowrap;
   transition: color 0.4s ease;
+}
+
+/* ═══════════════════════════════════════
+   Auto-hide Timeout Bar
+   ═══════════════════════════════════════ */
+.hide-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: var(--text-secondary);
+  opacity: 0;
+  z-index: 200;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.hide-bar.active {
+  opacity: 0.25;
+  width: 100%;
+  animation: hide-bar-shrink linear forwards;
+}
+
+@keyframes hide-bar-shrink {
+  from { width: 100%; }
+  to   { width: 0; }
 }
 
 /* ═══════════════════════════════════════

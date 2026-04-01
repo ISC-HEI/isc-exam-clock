@@ -175,8 +175,10 @@ function setupAutoHide(): void {
   const controls = document.getElementById('controls');
   const settings = document.getElementById('settings');
   const githubLink = document.getElementById('btn-github');
+  const hideBar = document.getElementById('hide-bar');
   if (!controls) return;
 
+  const HIDE_DELAY = 5000;
   let hideTimeout: ReturnType<typeof setTimeout>;
 
   const showControls = () => {
@@ -189,6 +191,15 @@ function setupAutoHide(): void {
     if (settings && settingsUserOpen) {
       settings.classList.remove('hidden');
     }
+
+    // Reset and restart the hide-bar animation
+    if (hideBar) {
+      hideBar.classList.remove('active');
+      void hideBar.offsetHeight;
+      hideBar.style.animationDuration = `${HIDE_DELAY}ms`;
+      hideBar.classList.add('active');
+    }
+
     clearTimeout(hideTimeout);
     hideTimeout = setTimeout(() => {
       // Don't hide if a dropdown is open (select is focused within settings)
@@ -205,7 +216,8 @@ function setupAutoHide(): void {
         githubLink.classList.remove('show');
         githubLink.classList.add('autohide');
       }
-    }, 10000);
+      if (hideBar) hideBar.classList.remove('active');
+    }, HIDE_DELAY);
   };
 
   document.addEventListener('mousemove', showControls);
