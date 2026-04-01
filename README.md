@@ -9,7 +9,7 @@
 
 Full-screen exam clock for projection during exams, featuring the ISC logo bloom animation, a large 24-hour clock, and an optional countdown timer.
 
-## 👉 [Use the application](https://isc-hei.github.io/isc-exam-clock/)
+## 👉 [Use the application](https://clock.isc-vs.ch)
 
 ## Features
 
