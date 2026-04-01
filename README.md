@@ -3,7 +3,7 @@
 </p>
 
 [![Deployed](https://img.shields.io/github/deployments/ISC-HEI/isc-exam-clock/github-pages?label=deployment&color=blue)](https://isc-hei.github.io/isc-exam-clock/)
-![License](https://img.shields.io/badge/license-GPL--3.0-brightgreen)
+![License](https://img.shields.io/badge/license-GPL--3.0-brightgreen)](LICENSE)
 
 # ISC Exam Clock
 
@@ -73,6 +73,12 @@ clock-app/
     ├── style.css       Layout, theme variables, typography
     └── animations.css  Bloom, wobble, background gradient
 ```
+
+---
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE).
 
 ---
 
