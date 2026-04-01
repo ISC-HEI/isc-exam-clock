@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISC Exam Clock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;700&family=Fira+Code:wght@400;700&family=Space+Mono:wght@400;700&family=Roboto+Mono:wght@400;700&family=Inter:wght@400;700&family=Outfit:wght@400;700&display=swap" rel="stylesheet" />
+  <style>.controls,.countdown-panel,.github-link,.footer{visibility:hidden}</style>
+</head>
+<body>
+  <!-- Background gradient layer -->
+  <div id="bg-gradient" class="bg-gradient"></div>
+
+  <!-- Main content -->
+  <main id="app">
+    <!-- Clock display (above logo) -->
+    <div id="clock-container" class="clock-container hidden">
+      <div id="clock" class="clock" aria-live="polite" aria-label="Current time"></div>
+      <div id="countdown-display" class="countdown-display hidden" aria-live="polite"></div>
+    </div>
+
+    <!-- ISC Logo -->
+    <div id="logo-wrapper" class="logo-wrapper">
+      <div id="isc-logo" class="isc-logo">
+        <div class="petal first-anim"></div>
+        <div class="petal second-anim"></div>
+        <div class="petal third-anim"></div>
+        <div class="petal fourth-anim"></div>
+        <div class="petal fifth-anim"></div>
+        <div class="center-cap"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    Made with ❤ — mui 2026
+  </footer>
+
+  <!-- Floating controls (buttons only) -->
+  <div id="controls" class="controls">
+    <div class="controls-grid">
+      <button id="btn-theme" class="control-btn" aria-label="Toggle theme" title="Toggle theme">
+        <svg id="icon-sun" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="icon-moon" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button id="btn-countdown" class="control-btn" aria-label="Countdown timer" title="Countdown timer">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 2h4"/><path d="M12 14l3-3"/>
+          <circle cx="12" cy="14" r="8"/>
+        </svg>
+      </button>
+
+      <button id="btn-fullscreen" class="control-btn" aria-label="Toggle fullscreen" title="Fullscreen">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+      </button>
+
+      <button id="btn-settings" class="control-btn" aria-label="Toggle settings" title="Settings">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- GitHub link (bottom-left) -->
+  <a id="btn-github" class="github-link autohide" href="https://github.com/ISC-HEI/isc-exam-clock" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository" title="GitHub">
+    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6.02 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+    </svg>
+  </a>
+
+  <!-- Bottom-right settings panel (hidden by default) -->
+  <div id="settings" class="settings hidden">
+    <div class="settings-buttons">
+      <button id="btn-lang" class="control-btn" aria-label="Toggle language">
+        <span id="lang-label">FR</span>
+      </button>
+
+      <button id="btn-seconds" class="control-btn" aria-label="Toggle seconds display" title="Toggle seconds">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="setting-row">
+      <label class="setting-label" data-i18n="bgLabel">Background</label>
+      <select id="select-bg-style" class="font-select" aria-label="Background style" title="Background style">
+        <option value="0">Gradient</option>
+        <option value="1">Blobs</option>
+        <option value="2">Pulse</option>
+        <option value="3">Sweep</option>
+        <option value="4">Aurora</option>
+      </select>
+    </div>
+
+    <div class="slider-group">
+      <label for="slider-bg" class="slider-label" data-i18n="bgIntensity" title="Background intensity">Intensity</label>
+      <input type="range" id="slider-bg" class="slider" min="0" max="100" value="40" />
+    </div>
+
+    <div class="setting-row">
+      <label class="setting-label" data-i18n="animLabel">Animation</label>
+      <select id="select-wobble" class="font-select" aria-label="Logo animation" title="Logo animation">
+        <option value="wobble">Gentle</option>
+        <option value="wobble-breathe">Breathe</option>
+        <option value="wobble-drift">Drift</option>
+        <option value="wobble-sway">Sway</option>
+      </select>
+    </div>
+
+    <div class="slider-group">
+      <label for="slider-amplitude" class="slider-label" data-i18n="amplitude" title="Animation amplitude">Amplitude</label>
+      <input type="range" id="slider-amplitude" class="slider" min="0" max="300" value="125" />
+    </div>
+
+    <div class="setting-row">
+      <label class="setting-label" data-i18n="fontLabel">Font</label>
+      <select id="select-font" class="font-select" aria-label="Choose font" title="Choose font">
+        <option value="JetBrains Mono">JetBrains Mono</option>
+        <option value="IBM Plex Mono">IBM Plex Mono</option>
+        <option value="Fira Code">Fira Code</option>
+        <option value="Space Mono">Space Mono</option>
+        <option value="Roboto Mono">Roboto Mono</option>
+        <option value="Inter">Inter</option>
+        <option value="Outfit">Outfit</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Countdown configuration panel -->
+  <div id="countdown-panel" class="countdown-panel hidden">
+    <h3 id="panel-title" data-i18n="countdownTitle">Countdown Timer</h3>
+
+    <div class="panel-tabs">
+      <button id="tab-endtime" class="panel-tab active" data-i18n="endTime">End Time</button>
+      <button id="tab-duration" class="panel-tab" data-i18n="duration">Duration</button>
+    </div>
+
+    <div id="input-endtime" class="panel-section">
+      <label for="input-time" data-i18n="endTimeLabel">Exam ends at:</label>
+      <input type="time" id="input-time" class="panel-input" />
+    </div>
+
+    <div id="input-duration" class="panel-section hidden">
+      <label data-i18n="durationLabel">Duration:</label>
+      <div class="duration-inputs">
+        <input type="number" id="input-hours" class="panel-input duration-num" min="0" max="12" value="1" />
+        <span>h</span>
+        <input type="number" id="input-minutes" class="panel-input duration-num" min="0" max="59" value="30" />
+        <span>min</span>
+      </div>
+    </div>
+
+    <div class="panel-option">
+      <label>
+        <input type="checkbox" id="check-sound" />
+        <span data-i18n="playSound">Play sound when done</span>
+      </label>
+    </div>
+
+    <div class="panel-actions">
+      <button id="btn-start-countdown" class="panel-btn primary" data-i18n="start">Start</button>
+      <button id="btn-stop-countdown" class="panel-btn hidden" data-i18n="stop">Stop</button>
+      <button id="btn-close-panel" class="panel-btn" data-i18n="close">Close</button>
+    </div>
+  </div>
+
+  <!-- Flash overlay for countdown completion -->
+  <div id="flash-overlay" class="flash-overlay hidden"></div>
+
+  <!-- Times up overlay -->
+  <div id="timesup-overlay" class="timesup-overlay hidden">
+    <div class="timesup-content">
+      <span id="timesup-text" data-i18n="timesUp">Time's up!</span>
+      <button id="btn-dismiss" class="panel-btn primary" data-i18n="dismiss">Dismiss</button>
+    </div>
+  </div>
+
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

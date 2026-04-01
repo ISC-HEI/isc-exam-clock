@@ -1,0 +1,722 @@
+/* ═══════════════════════════════════════
+   CSS Custom Properties — Theme
+   ═══════════════════════════════════════ */
+:root {
+  /* Light theme (default) */
+  --text-primary: #1a1a2e;
+  --text-secondary: #555;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface-hover: rgba(255, 255, 255, 0.95);
+  --control-bg: rgba(255, 255, 255, 0.7);
+  --control-hover: rgba(255, 255, 255, 0.9);
+  --control-text: #333;
+  --clock-color: #1a1a2e;
+  --countdown-color: #555;
+  --panel-bg: rgba(255, 255, 255, 0.92);
+  --panel-border: rgba(0, 0, 0, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.05);
+  --input-border: rgba(0, 0, 0, 0.15);
+  --petal-cap: #fff;
+
+  /* Background gradient — light ISC pastel colors */
+  --bg-grad-1: rgb(247, 241, 159);
+  --bg-grad-2: rgb(140, 198, 230);
+  --bg-grad-3: rgb(168, 144, 192);
+  --bg-grad-4: rgb(226, 171, 186);
+  --bg-grad-5: rgb(152, 199, 191);
+
+  --body-bg: #f5f5f5;
+  --bg-intensity: 0.25;
+}
+
+html.dark {
+  --text-primary: #e8e8f0;
+  --text-secondary: #aaa;
+  --surface: rgba(30, 30, 50, 0.85);
+  --surface-hover: rgba(40, 40, 65, 0.95);
+  --control-bg: rgba(40, 40, 65, 0.7);
+  --control-hover: rgba(55, 55, 80, 0.9);
+  --control-text: #ddd;
+  --clock-color: #f0f0ff;
+  --countdown-color: #bbb;
+  --panel-bg: rgba(25, 25, 45, 0.95);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.08);
+  --input-border: rgba(255, 255, 255, 0.15);
+  --petal-cap: #fff;
+
+  /* Background gradient — dark ISC muted colors */
+  --bg-grad-1: rgb(180, 170, 80);
+  --bg-grad-2: rgb(80, 140, 180);
+  --bg-grad-3: rgb(130, 100, 160);
+  --bg-grad-4: rgb(170, 100, 130);
+  --bg-grad-5: rgb(80, 150, 140);
+
+  --body-bg: #0e0e1a;
+  --bg-intensity: 0.25;
+}
+
+/* ═══════════════════════════════════════
+   Base Reset & Layout
+   ═══════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  background-color: var(--body-bg);
+  color: var(--text-primary);
+  overflow: hidden;
+  transition: background-color 0.6s ease, color 0.4s ease;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* Clock container uses max-height trick for smooth reveal without layout jump */
+.clock-container {
+  text-align: center;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 1s ease;
+  z-index: 2;
+}
+
+.clock-container.visible {
+  max-height: 50vh;
+  opacity: 1;
+}
+
+/* Logo wrapper — starts centered via flexbox, scales down when settled */
+.logo-wrapper {
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+}
+
+.logo-wrapper.settled {
+  transform: scale(0.38);
+}
+
+/* ═══════════════════════════════════════
+   ISC Logo
+   ═══════════════════════════════════════ */
+.isc-logo {
+  position: relative;
+  width: 80px;
+  height: 160px;
+  transform: scale(2.125);
+  transform-origin: center center;
+}
+
+.isc-logo .petal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 160px;
+  border-radius: 80px;
+  transform-origin: center 120px;
+}
+
+.isc-logo .petal::before {
+  content: "";
+  width: 80px;
+  height: 80px;
+  background-color: var(--petal-cap);
+  border-radius: 80px;
+  position: absolute;
+  bottom: 0;
+  transition: background-color 0.4s ease;
+}
+
+/* White center circle to hide petal overlap during bloom */
+.center-cap {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--petal-cap);
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  animation: center-cap-scale 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.1s;
+}
+
+@keyframes center-cap-scale {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Petal colors & rotation angles */
+.first-anim {
+  background: linear-gradient(0deg, rgb(255, 254, 245), 40%, rgb(247, 241, 159));
+  --rotate: -90deg;
+  --delay: 0.1s;
+}
+.second-anim {
+  background: linear-gradient(0deg, rgb(215, 221, 224), 40%, rgb(140, 198, 230));
+  --rotate: -45deg;
+  --delay: 0.2s;
+}
+.third-anim {
+  background: linear-gradient(0deg, rgb(180, 168, 192), 40%, rgb(168, 144, 192));
+  --rotate: 0deg;
+  --delay: 0.3s;
+}
+.fourth-anim {
+  background: linear-gradient(0deg, rgb(224, 203, 209), 40%, rgb(226, 171, 186));
+  --rotate: 45deg;
+  --delay: 0.4s;
+}
+.fifth-anim {
+  background: linear-gradient(0deg, rgb(253, 253, 253), 40%, rgb(152, 199, 191));
+  --rotate: 90deg;
+  --delay: 0.5s;
+}
+
+/* ═══════════════════════════════════════
+   Clock
+   ═══════════════════════════════════════ */
+.clock {
+  font-family: var(--clock-font, 'Fira Code'), monospace;
+  font-size: clamp(4rem, 14vw, 16rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--clock-color);
+  text-align: center;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  transition: color 0.4s ease;
+  user-select: none;
+}
+
+.countdown-display {
+  font-family: var(--clock-font, 'Fira Code'), monospace;
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--countdown-color);
+  text-align: center;
+  margin-top: 0.5rem;
+  transition: color 0.4s ease, opacity 0.4s ease;
+  user-select: none;
+}
+
+.countdown-display.hidden {
+  opacity: 0;
+}
+
+.countdown-display.urgent {
+  color: #e74c3c;
+  animation: pulse-text 1s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+/* ═══════════════════════════════════════
+   Floating Controls (top-right buttons)
+   ═══════════════════════════════════════ */
+.controls {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 100;
+  transition: opacity 0.4s ease;
+  visibility: visible;
+}
+
+.controls.autohide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.controls.autohide:hover,
+.controls.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ═══════════════════════════════════════
+   Settings Panel (bottom-right)
+   ═══════════════════════════════════════ */
+.settings {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 100;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  visibility: visible;
+  width: 180px;
+  box-sizing: border-box;
+}
+
+.settings.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+.setting-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.settings-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.settings-buttons a.control-btn {
+  text-decoration: none;
+}
+
+/* ═══════════════════════════════════════
+   GitHub Link (bottom-left)
+   ═══════════════════════════════════════ */
+.github-link {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--control-bg);
+  color: var(--control-text);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, transform 0.2s ease, opacity 0.4s ease;
+  text-decoration: none;
+  z-index: 100;
+  opacity: 0.5;
+  visibility: visible;
+}
+
+.github-link.autohide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.github-link.autohide:hover,
+.github-link.show {
+  opacity: 0.5;
+  pointer-events: auto;
+}
+
+.github-link:hover {
+  background: var(--control-hover);
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.github-link .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.setting-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--control-text);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-left: 0.75rem;
+  user-select: none;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--control-bg);
+  color: var(--control-text);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.control-btn:hover {
+  background: var(--control-hover);
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.font-select {
+  height: 44px;
+  width: 100%;
+  border-radius: 22px;
+  border: none;
+  background: var(--control-bg);
+  color: var(--control-text);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0 16px;
+  text-align: center;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.font-select:hover {
+  background: var(--control-hover);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.icon.hidden {
+  display: none;
+}
+
+/* ═══════════════════════════════════════
+   Controls Grid (2×n for buttons)
+   ═══════════════════════════════════════ */
+.controls-grid {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ═══════════════════════════════════════
+   Background Slider
+   ═══════════════════════════════════════ */
+.slider-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  background: var(--control-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 1.25rem;
+  padding: 0.35rem 0.7rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.slider-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--control-text);
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.slider {
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--input-border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgb(140, 198, 230);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgb(140, 198, 230);
+  border: none;
+  cursor: pointer;
+}
+
+.hidden {
+  /* Generic hidden — used by JS toggling */
+}
+
+/* ═══════════════════════════════════════
+   Countdown Panel
+   ═══════════════════════════════════════ */
+.countdown-panel {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 1.25rem;
+  padding: 1.5rem 2rem;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  min-width: 320px;
+  max-width: 90vw;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  visibility: visible;
+}
+
+.countdown-panel.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(20px);
+}
+
+.countdown-panel h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.panel-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.panel-tab {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.panel-tab.active {
+  background: var(--control-bg);
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.panel-section {
+  margin-bottom: 1rem;
+}
+
+.panel-section.hidden {
+  display: none;
+}
+
+.panel-section label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.panel-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-family: 'Fira Code', monospace;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.panel-input:focus {
+  border-color: rgb(140, 198, 230);
+}
+
+.duration-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.duration-num {
+  width: 4rem;
+  text-align: center;
+}
+
+.panel-option {
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.panel-option label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.panel-option input[type="checkbox"] {
+  accent-color: rgb(140, 198, 230);
+}
+
+.panel-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.panel-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.panel-btn:hover {
+  background: var(--control-hover);
+}
+
+.panel-btn.primary {
+  background: rgb(140, 198, 230);
+  color: #1a1a2e;
+  border-color: rgb(140, 198, 230);
+}
+
+.panel-btn.primary:hover {
+  background: rgb(120, 180, 215);
+}
+
+.panel-btn.hidden {
+  display: none;
+}
+
+
+/* ═══════════════════════════════════════
+   Footer
+   ═══════════════════════════════════════ */
+.footer {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  user-select: none;
+  z-index: 1;
+  white-space: nowrap;
+  transition: color 0.4s ease;
+  visibility: visible;
+}
+
+/* ═══════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .isc-logo {
+    transform: scale(1.275);
+  }
+
+  .logo-wrapper.settled {
+    transform: scale(0.3);
+  }
+
+  .controls {
+    top: 1rem;
+    right: 1rem;
+    gap: 0.5rem;
+  }
+
+  .controls-grid {
+    gap: 0.5rem;
+  }
+
+  .control-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .settings {
+    bottom: 1rem;
+    right: 1rem;
+    width: 160px;
+  }
+
+  .font-select {
+    height: 38px;
+    font-size: 0.65rem;
+  }
+
+  .countdown-panel {
+    bottom: 1rem;
+    padding: 1rem 1.25rem;
+    min-width: auto;
+    width: calc(100vw - 2rem);
+  }
+}
