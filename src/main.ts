@@ -26,6 +26,7 @@ initI18n();
 document.addEventListener('DOMContentLoaded', () => {
   // Start logo intro animation, reveal clock when done
   initLogo(() => {
+    document.documentElement.classList.add('ready');
     const clockContainer = document.getElementById('clock-container');
     if (clockContainer) {
       clockContainer.classList.remove('hidden');
@@ -41,6 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-seconds')?.addEventListener('click', toggleSeconds);
   document.getElementById('btn-countdown')?.addEventListener('click', () => togglePanel());
   document.getElementById('btn-fullscreen')?.addEventListener('click', toggleFullscreen);
+
+  // Reset settings
+  document.getElementById('btn-reset')?.addEventListener('click', () => {
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith('isc-clock-'))
+      .forEach((k) => localStorage.removeItem(k));
+    location.reload();
+  });
 
   // Settings toggle (cog button)
   document.getElementById('btn-settings')?.addEventListener('click', () => {
@@ -182,14 +191,21 @@ function setupAutoHide(): void {
     }
     clearTimeout(hideTimeout);
     hideTimeout = setTimeout(() => {
+      // Don't hide if a dropdown is open (select is focused within settings)
+      const active = document.activeElement;
+      if (active && active.tagName === 'SELECT' && settings?.contains(active)) {
+        showControls();
+        return;
+      }
       controls.classList.remove('show');
       controls.classList.add('autohide');
       if (settings) settings.classList.add('hidden');
+      settingsUserOpen = false;
       if (githubLink) {
         githubLink.classList.remove('show');
         githubLink.classList.add('autohide');
       }
-    }, 4000);
+    }, 10000);
   };
 
   document.addEventListener('mousemove', showControls);

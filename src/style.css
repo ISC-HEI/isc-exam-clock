@@ -252,6 +252,9 @@ body {
   gap: 0.75rem;
   z-index: 100;
   transition: opacity 0.4s ease;
+}
+
+html.ready .controls {
   visibility: visible;
 }
 
@@ -278,7 +281,6 @@ body {
   gap: 0.5rem;
   z-index: 100;
   transition: opacity 0.3s ease, transform 0.3s ease;
-  visibility: visible;
   width: 180px;
   box-sizing: border-box;
 }
@@ -299,6 +301,8 @@ body {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .settings-buttons a.control-btn {
@@ -326,7 +330,6 @@ body {
   text-decoration: none;
   z-index: 100;
   opacity: 0.5;
-  visibility: visible;
 }
 
 .github-link.autohide {
@@ -519,7 +522,6 @@ body {
   min-width: 320px;
   max-width: 90vw;
   transition: opacity 0.3s ease, transform 0.3s ease;
-  visibility: visible;
 }
 
 .countdown-panel.hidden {
@@ -672,7 +674,45 @@ body {
   z-index: 1;
   white-space: nowrap;
   transition: color 0.4s ease;
-  visibility: visible;
+}
+
+/* ═══════════════════════════════════════
+   Custom Tooltips
+   ═══════════════════════════════════════ */
+.control-btn[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 8px);
+  transform: translateX(-50%);
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+  background: var(--panel-bg);
+  color: var(--text-primary);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  font-weight: 400;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* Position tooltip above for github link (bottom-left) */
+.github-link[data-tooltip]::after {
+  top: auto;
+  bottom: calc(100% + 8px);
 }
 
 /* ═══════════════════════════════════════
