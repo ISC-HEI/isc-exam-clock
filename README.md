@@ -3,7 +3,7 @@
 </p>
 
 [![Deployed](https://img.shields.io/github/deployments/ISC-HEI/isc-exam-clock/github-pages?label=deployment&color=blue)](https://isc-hei.github.io/isc-exam-clock/)
-![License](https://img.shields.io/badge/license-GPL--3.0-brightgreen)](LICENSE)
+![License](https://img.shields.io/badge/license-GPL--3.0-brightgreen)
 
 # ISC Exam Clock
 
@@ -19,7 +19,7 @@ Full-screen exam clock for projection during exams, featuring the ISC logo bloom
 - **Dark / light theme** toggle, persisted across sessions
 - **Bilingual** (FR / EN) with automatic detection
 - **Animated background** using ISC brand colors, with adjustable intensity
-- **Auto-hiding controls** — fade out after 4 s of inactivity
+- **Auto-hiding controls** — fade out after inactivity
 - **Fullscreen mode** for clean projection
 - **URL presets** — share a link with the countdown pre-configured
 
@@ -29,8 +29,6 @@ Full-screen exam clock for projection during exams, featuring the ISC logo bloom
 bun install
 bun run dev
 ```
-
-Then open http://localhost:5173/isc-exam-clock/
 
 ## URL Parameters
 
