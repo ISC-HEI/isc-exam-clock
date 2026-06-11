@@ -235,6 +235,40 @@ body {
   animation: pulse-text 1s ease-in-out infinite;
 }
 
+/* Timer mode: clock is hidden, countdown takes its place at full size */
+.clock.hidden {
+  display: none;
+}
+
+.countdown-display.timer-mode {
+  font-size: clamp(4rem, 14vw, 16rem);
+  font-weight: 700;
+  color: var(--clock-color);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  margin-top: 0;
+}
+
+.countdown-display.timer-mode.urgent {
+  color: #e74c3c;
+}
+
+.timer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.timer-actions.hidden {
+  display: none;
+}
+
+.timer-actions .panel-btn {
+  flex: 0 0 auto;
+  padding: 0.7rem 1.4rem;
+}
+
 @keyframes pulse-text {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.5; }

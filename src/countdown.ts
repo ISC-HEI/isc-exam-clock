@@ -5,6 +5,9 @@ let targetTime: number | null = null;
 let countdownInterval: ReturnType<typeof setInterval> | null = null;
 let playSound = false;
 let audioCtx: AudioContext | null = null;
+let timerMode = false; // checkbox preference
+let timerModeActive = false; // current/last countdown ran as timer mode
+let lastDurationMs = 0; // duration of the last started countdown, for relaunch
 
 // DOM references
 let displayEl: HTMLElement | null = null;
@@ -13,6 +16,8 @@ let startBtn: HTMLElement | null = null;
 let stopBtn: HTMLElement | null = null;
 let flashOverlay: HTMLElement | null = null;
 let timesupOverlay: HTMLElement | null = null;
+let clockEl: HTMLElement | null = null;
+let timerActionsEl: HTMLElement | null = null;
 
 export function initCountdown(): void {
   displayEl = document.getElementById('countdown-display');
@@ -21,6 +26,8 @@ export function initCountdown(): void {
   stopBtn = document.getElementById('btn-stop-countdown');
   flashOverlay = document.getElementById('flash-overlay');
   timesupOverlay = document.getElementById('timesup-overlay');
+  clockEl = document.getElementById('clock');
+  timerActionsEl = document.getElementById('timer-actions');
 
   const tabEndtime = document.getElementById('tab-endtime');
   const tabDuration = document.getElementById('tab-duration');
@@ -60,6 +67,26 @@ export function initCountdown(): void {
     playSound = true;
   }
 
+  // Timer mode checkbox
+  const checkTimerMode = document.getElementById('check-timer-mode') as HTMLInputElement | null;
+  checkTimerMode?.addEventListener('change', () => {
+    timerMode = checkTimerMode.checked;
+    localStorage.setItem('isc-clock-timer-mode', String(timerMode));
+  });
+  if (localStorage.getItem('isc-clock-timer-mode') === 'true' && checkTimerMode) {
+    checkTimerMode.checked = true;
+    timerMode = true;
+  }
+
+  // Timer mode action buttons
+  document.getElementById('btn-gong')?.addEventListener('click', () => playGongSound());
+  document.getElementById('btn-relaunch')?.addEventListener('click', relaunchTimer);
+  document.getElementById('btn-exit-timer')?.addEventListener('click', () => {
+    exitTimerView();
+    displayEl?.classList.add('hidden');
+    if (displayEl) displayEl.textContent = '';
+  });
+
   // Live update when inputs change while countdown is running
   const inputTime = document.getElementById('input-time') as HTMLInputElement | null;
   const inputHours = document.getElementById('input-hours') as HTMLInputElement | null;
@@ -74,6 +101,7 @@ export function initCountdown(): void {
         target.setDate(target.getDate() + 1);
       }
       targetTime = target.getTime();
+      lastDurationMs = targetTime - now.getTime();
       updateDisplay();
     }
   });
@@ -83,7 +111,8 @@ export function initCountdown(): void {
       const hours = parseInt(inputHours?.value ?? '0', 10) || 0;
       const mins = parseInt(inputMinutes?.value ?? '0', 10) || 0;
       if (hours > 0 || mins > 0) {
-        targetTime = Date.now() + (hours * 3600 + mins * 60) * 1000;
+        lastDurationMs = (hours * 3600 + mins * 60) * 1000;
+        targetTime = Date.now() + lastDurationMs;
         displayEl?.classList.remove('urgent');
         updateDisplay();
       }
@@ -103,7 +132,10 @@ export function initCountdown(): void {
   });
 
   // Stop
-  stopBtn?.addEventListener('click', stopCountdown);
+  stopBtn?.addEventListener('click', () => {
+    stopCountdown();
+    exitTimerView();
+  });
 
   // Close panel
   btnClose?.addEventListener('click', () => togglePanel(false));
@@ -141,6 +173,7 @@ function startFromEndTime(): void {
   }
 
   targetTime = target.getTime();
+  lastDurationMs = targetTime - now.getTime();
   beginCountdown();
 }
 
@@ -152,7 +185,8 @@ function startFromDuration(): void {
 
   if (hours === 0 && mins === 0) return;
 
-  targetTime = Date.now() + (hours * 3600 + mins * 60) * 1000;
+  lastDurationMs = (hours * 3600 + mins * 60) * 1000;
+  targetTime = Date.now() + lastDurationMs;
   beginCountdown();
 }
 
@@ -162,8 +196,19 @@ function beginCountdown(): void {
   stopBtn?.classList.remove('hidden');
   displayEl?.classList.remove('hidden');
 
+  // Timer mode: the countdown replaces the clock
+  timerModeActive = timerMode;
+  if (timerModeActive) {
+    clockEl?.classList.add('hidden');
+    displayEl?.classList.add('timer-mode');
+  } else {
+    exitTimerView();
+  }
+  timerActionsEl?.classList.add('hidden');
+
   togglePanel(false);
   updateDisplay();
+  if (countdownInterval !== null) clearInterval(countdownInterval);
   countdownInterval = setInterval(tickCountdown, 250);
 }
 
@@ -176,8 +221,9 @@ function tickCountdown(): void {
     return;
   }
 
-  // Add urgent class when less than 5 minutes remain
-  if (remaining < 5 * 60 * 1000) {
+  // Add urgent class when little time remains (30s in timer mode, 5 min otherwise)
+  const urgentThreshold = timerModeActive ? 30 * 1000 : 5 * 60 * 1000;
+  if (remaining < urgentThreshold) {
     displayEl?.classList.add('urgent');
   }
 
@@ -192,6 +238,15 @@ function updateDisplay(): void {
   const h = Math.floor(totalSecs / 3600);
   const m = Math.floor((totalSecs % 3600) / 60);
   const s = totalSecs % 60;
+
+  // Timer mode renders like the clock: H:MM:SS
+  if (timerModeActive) {
+    displayEl.textContent =
+      h > 0
+        ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+        : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return;
+  }
 
   const lang = getLang();
   const remainingLabel = t('remaining');
@@ -213,6 +268,7 @@ function updateDisplay(): void {
 }
 
 function onCountdownComplete(): void {
+  const wasTimerMode = timerModeActive;
   stopCountdown();
   targetTime = null;
 
@@ -228,6 +284,18 @@ function onCountdownComplete(): void {
       },
       { once: true }
     );
+  }
+
+  if (wasTimerMode) {
+    // Keep the big display at zero and offer gong replay / relaunch
+    timerModeActive = true;
+    if (displayEl) {
+      displayEl.textContent = '00:00';
+      displayEl.classList.remove('hidden');
+    }
+    timerActionsEl?.classList.remove('hidden');
+    playGongSound();
+    return;
   }
 
   // Show times-up overlay
@@ -259,6 +327,20 @@ function stopCountdown(): void {
   }
 }
 
+function exitTimerView(): void {
+  timerModeActive = false;
+  displayEl?.classList.remove('timer-mode');
+  clockEl?.classList.remove('hidden');
+  timerActionsEl?.classList.add('hidden');
+}
+
+function relaunchTimer(): void {
+  if (lastDurationMs <= 0) return;
+  targetTime = Date.now() + lastDurationMs;
+  displayEl?.classList.remove('urgent');
+  beginCountdown();
+}
+
 function dismissTimesUp(): void {
   timesupOverlay?.classList.add('hidden');
   displayEl?.classList.add('hidden');
@@ -286,6 +368,48 @@ function playAlarmSound(): void {
 
       osc.start(start);
       osc.stop(start + 0.3);
+    }
+  } catch {
+    // Web Audio API not available — silently fail
+  }
+}
+
+function playGongSound(): void {
+  try {
+    audioCtx = audioCtx || new AudioContext();
+    const ctx = audioCtx;
+    const now = ctx.currentTime;
+
+    const master = ctx.createGain();
+    master.gain.value = 0.6;
+    master.connect(ctx.destination);
+
+    // Inharmonic partials of a struck gong, each with its own decay
+    const partials = [
+      { freq: 98, gain: 1.0, decay: 5.0 },
+      { freq: 147, gain: 0.6, decay: 4.5 },
+      { freq: 222, gain: 0.45, decay: 4.0 },
+      { freq: 295, gain: 0.3, decay: 3.0 },
+      { freq: 414, gain: 0.2, decay: 2.5 },
+      { freq: 587, gain: 0.12, decay: 2.0 },
+    ];
+
+    for (const p of partials) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(p.freq, now);
+      // Slight downward pitch drift as the gong rings out
+      osc.frequency.exponentialRampToValueAtTime(p.freq * 0.985, now + p.decay);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(p.gain * 0.5, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + p.decay);
+
+      osc.connect(gain);
+      gain.connect(master);
+      osc.start(now);
+      osc.stop(now + p.decay);
     }
   } catch {
     // Web Audio API not available — silently fail

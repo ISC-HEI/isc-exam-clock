@@ -19,6 +19,11 @@
     <div id="clock-container" class="clock-container hidden">
       <div id="clock" class="clock" aria-live="polite" aria-label="Current time"></div>
       <div id="countdown-display" class="countdown-display hidden" aria-live="polite"></div>
+      <div id="timer-actions" class="timer-actions hidden">
+        <button id="btn-gong" class="panel-btn" data-i18n="replayGong">Replay gong</button>
+        <button id="btn-relaunch" class="panel-btn primary" data-i18n="relaunch">Restart timer</button>
+        <button id="btn-exit-timer" class="panel-btn" data-i18n="backToClock">Show clock</button>
+      </div>
     </div>
 
     <!-- ISC Logo -->
@@ -180,6 +185,13 @@
       <label>
         <input type="checkbox" id="check-sound" />
         <span data-i18n="playSound">Play sound when done</span>
+      </label>
+    </div>
+
+    <div class="panel-option">
+      <label>
+        <input type="checkbox" id="check-timer-mode" />
+        <span data-i18n="timerMode">Timer mode (replaces clock)</span>
       </label>
     </div>
 
